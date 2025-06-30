@@ -17,60 +17,8 @@
 **  with [MooPing].  If not, see <https://www.gnu.org/licenses/>.             **
 **                                                                            **
 *******************************************************************************/
-#include "../include/controllers/PingControllers.hpp"
-#include "../include/controllers/ScanningControllers.hpp"
-#include "../include/tools/drawAppIcon.hpp"
 
-#include <chrono>
-#include <iostream>
-#include <thread>
-
-enum class MenuOption {
-   PING = 1,
-   SCANNING,
-   EXIT,
+class ScanningControllers{
+    public:
+    void startScanningMode();
 };
-
-int main()
-{
-   std::cout << "Hello to MooPing\n";
-   std::cout << "For start click enter\n";
-   std::cin.get();
-
-   for (int i = 0; i <= 4; i++) {
-      std::cout << "\033[2J\033[H";
-      std::cout << "|";
-      std::cout << std::flush;
-      std::this_thread::sleep_for(std::chrono::milliseconds(350));
-
-      std::cout << "\033[2J\033[H";
-      std::cout << "—";
-      std::cout << std::flush;
-      std::this_thread::sleep_for(std::chrono::milliseconds(350));
-   }
-   std::cout << "\033[2J\033[H";
-
-   PingControllers pingControllers;
-   ScanningControllers scanningControllers;
-   while (true) {
-      std::cout << "\033[2J\033[H";
-      drawAppIcon();
-      int selectedOption {0};
-      std::cout << "MooPing menu\n";
-      std::cout << "(1) Pinging Mode\n";
-      std::cout << "(2) Network Scanning Mode\n";
-      std::cout << "(3) Exit\n";
-      std::cin >> selectedOption;
-      switch (static_cast<MenuOption>(selectedOption)) {
-         case MenuOption::PING:
-            pingControllers.startPiningMode();
-            break;
-         case MenuOption::SCANNING:
-            scanningControllers.startScanningMode();
-            break;
-         case MenuOption::EXIT:
-            return 0;
-            break;
-      }
-   }
-}

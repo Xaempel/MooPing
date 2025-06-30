@@ -7,7 +7,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/config_boost-asio.cmake)
+include(cmake/path.cmake)
 
-add_executable(${PROJECT_NAME} src/main.cpp include/tools/drawAppIcon.hpp src/tools/drawAppIcon.cpp) 
+add_executable(${PROJECT_NAME} ${HPP_PATH} ${CPP_PATH}) 
 
 config_boost_asio(${PROJECT_NAME})
