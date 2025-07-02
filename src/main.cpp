@@ -64,7 +64,7 @@ int main()
       std::cin >> selectedOption;
       switch (static_cast<MenuOption>(selectedOption)) {
          case MenuOption::PING:
-            pingControllers.startPiningMode();
+            pingControllers.startPingingMode();
             break;
          case MenuOption::SCANNING:
             networkScanningControllers.startScanningMode();

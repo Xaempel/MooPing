@@ -19,7 +19,9 @@
 *******************************************************************************/
 #pragma once
 
-class PingControllers {
-   public:
-   void startPingingMode();
+#include <string>
+
+class PingModel{
+    public:
+    void sendPing(std::string destination_ip);
 };
