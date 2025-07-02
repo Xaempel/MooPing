@@ -17,8 +17,11 @@
 **  with [MooPing].  If not, see <https://www.gnu.org/licenses/>.             **
 **                                                                            **
 *******************************************************************************/
+#pragma once
 
-class ScanningControllers{
+#include "../include/models/NetworkScanningModel.hpp"
+
+class NetworkScanningControllers{
     public:
     void startScanningMode();
 };

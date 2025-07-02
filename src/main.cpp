@@ -18,17 +18,18 @@
 **                                                                            **
 *******************************************************************************/
 #include "../include/controllers/PingControllers.hpp"
-#include "../include/controllers/ScanningControllers.hpp"
+#include "../include/controllers/NetworkScanningControllers.hpp"
 #include "../include/tools/drawAppIcon.hpp"
+#include "include/controllers/NetworkScanningControllers.hpp"
 
 #include <chrono>
 #include <iostream>
 #include <thread>
 
 enum class MenuOption {
-   PING = 1,
-   SCANNING,
-   EXIT,
+   PING     = 1,
+   SCANNING = 2,
+   EXIT     = 3,
 };
 
 int main()
@@ -51,7 +52,7 @@ int main()
    std::cout << "\033[2J\033[H";
 
    PingControllers pingControllers;
-   ScanningControllers scanningControllers;
+   NetworkScanningControllers networkScanningControllers;
    while (true) {
       std::cout << "\033[2J\033[H";
       drawAppIcon();
@@ -66,7 +67,7 @@ int main()
             pingControllers.startPiningMode();
             break;
          case MenuOption::SCANNING:
-            scanningControllers.startScanningMode();
+            networkScanningControllers.startScanningMode();
             break;
          case MenuOption::EXIT:
             return 0;

@@ -26,6 +26,7 @@ Here you write about your project system requirements
 - CMake Version 3.20 or later
 - Git Version 2.49.0 or later
 - Boost Version 1.88.0 or later
+- Nmap Version 7.95 or later
 
 [Optional Requirements]
 
@@ -47,6 +48,11 @@ This project uses the following tools and dependencies:
 
 - [Boost](https://www.boost.org/): A collection of peer-reviewed, portable C++ source libraries that extend the functionality of C++ and help with tasks such as threading, networking (including Asio), data structures, algorithms, and more.
 
+- [Nmap](https://nmap.org/):  Network scanning tool used by this application as an external process for network discovery and device detection.  
+  Nmap is licensed under the Nmap Public Source License (NPSL).  
+  More information and the [full license text can be found here](https://nmap.org/book/man-legal.html)
+
+  This project does not include or modify Nmap code, but requires Nmap to be installed separately.
 
 ## Authors
 
