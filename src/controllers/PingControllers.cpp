@@ -11,6 +11,12 @@ enum class PingWorkingMode {
    Automatic,
 };
 
+// Multi send mode - It's ping package is sending for infinity
+enum class SendingPingMode {
+   MultiSend = 1,
+   SingleSend,
+};
+
 void PingControllers::startPingingMode()
 {
    int selectedOption {0};
@@ -24,12 +30,31 @@ void PingControllers::startPingingMode()
    std::string userInputIP {};
    PingModel pingModel {};
 
+   int selectedSengingfPingMode {0};
    switch (static_cast<PingWorkingMode>(selectedOption)) {
       case PingWorkingMode::Manual:
          std::cout << "Warning if you wanna use this function you must run this app on sudo mode\n";
          std::cout << "Enter IP of ping destination\n";
          std::cin >> userInputIP;
-         pingModel.sendPing(userInputIP);
+
+         std::cout << "Do you wanna send multiple ping packets?\n";
+         std::cout << "(1) Yes\n";
+         std::cout << "(2) No\n";
+         std::cin >> selectedSengingfPingMode;
+         switch (static_cast<SendingPingMode>(selectedSengingfPingMode)) {
+            case SendingPingMode::MultiSend:
+               while (true) {
+                  std::cout << "Ping sent\n";
+                  std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+                  pingModel.sendPing(userInputIP);
+               }
+               break;
+
+            case SendingPingMode::SingleSend:
+               pingModel.sendPing(userInputIP);
+               break;
+         }
+
          break;
       case PingWorkingMode::Automatic:
          std::cout << "I don't implemented this function yet\n";
