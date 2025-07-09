@@ -2,6 +2,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/ip/icmp.hpp>
+#include <chrono>
 #include <iostream>
 
 using boost::asio::ip::icmp;
@@ -62,10 +63,29 @@ void PingModel::sendPing(std::string destination_ip)
 
    std::shared_ptr<ICMPPackageData> currentPackageData {std::make_shared<ICMPPackageData>()};
 
+   auto startTime = std::chrono::steady_clock::now();
    socket.send_to(boost::asio::buffer(data), destination);
 
-   currentPackageData->size           = sizeof(ICMPHeader) + packageBody.size();
-   currentPackageData->sequenceNumber = packageSequenceNumber;
+   boost::asio::streambuf replyBuffer;
+   icmp::endpoint senderEndpoint;
+
+   std::size_t length       = socket.receive_from(replyBuffer.prepare(1024), senderEndpoint);
+   auto endTime             = std::chrono::steady_clock::now();
+   auto duration            = std::chrono::duration<double, std::milli>(endTime - startTime);
+   currentPackageData->time = duration.count();
+   replyBuffer.commit(length);
+
+   std::vector<unsigned char> rawData(boost::asio::buffers_begin(replyBuffer.data()),
+                                      boost::asio::buffers_end(replyBuffer.data()));
+
+   if (length >= 20) {
+      unsigned char ttl       = rawData[8];
+      currentPackageData->ttl = static_cast<int>(ttl);
+   }
+
+   currentPackageData->size               = sizeof(ICMPHeader) + packageBody.size();
+   currentPackageData->sequenceNumber     = packageSequenceNumber;
+   currentPackageData->destinationAddress = destination.address().to_string().c_str();
 
    ICMPPackagesData.push_back(currentPackageData);
 
@@ -74,6 +94,9 @@ void PingModel::sendPing(std::string destination_ip)
 
 void PingModel::showPackageInfo(int packageId)
 {
-   std::cout << "size of packages " << ICMPPackagesData.at(packageId)->size << "   ";
-   std::cout << "Sequence number is " << ICMPPackagesData.at(packageId)->sequenceNumber << "   ";
+   std::cout << "size of packages=" << ICMPPackagesData.at(packageId)->size << "   ";
+   std::cout << "sequence_number=" << ICMPPackagesData.at(packageId)->sequenceNumber << "   ";
+   std::cout << "ttl=" << ICMPPackagesData.at(packageId)->ttl << "   ";
+   std::cout << "time=" << ICMPPackagesData.at(packageId)->time << "ms    ";
+   std::cout << "destination_ip=" << ICMPPackagesData.at(packageId)->destinationAddress << "   ";
 }

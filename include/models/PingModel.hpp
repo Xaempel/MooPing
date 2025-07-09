@@ -20,13 +20,17 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 #include <memory>
 #include <string>
+#include <vector>
 
 struct ICMPPackageData {
-   uint32_t size = 0;
-   int sequenceNumber = 0;
+   uint32_t size {0};
+   double time {0.0};
+   int sequenceNumber {0};
+   int ttl {0};
+
+   std::string destinationAddress {};
 };
 
 class PingModel {
