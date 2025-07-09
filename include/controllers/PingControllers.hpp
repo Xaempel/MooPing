@@ -22,4 +22,7 @@
 class PingControllers {
    public:
    void startPingingMode();
+
+   private:
+   bool isAdditionalInfoAboutPackages {false};
 };

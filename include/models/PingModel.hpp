@@ -19,9 +19,24 @@
 *******************************************************************************/
 #pragma once
 
+#include <cstdint>
+#include <vector>
+#include <memory>
 #include <string>
 
-class PingModel{
-    public:
-    void sendPing(std::string destination_ip);
+struct ICMPPackageData {
+   uint32_t size = 0;
+   int sequenceNumber = 0;
+};
+
+class PingModel {
+   using ICMPPackagesDataListType = std::shared_ptr<ICMPPackageData>;
+
+   public:
+   void sendPing(std::string destination_ip);
+   void showPackageInfo(int idOfPackage);
+
+   private:
+   int packageSequenceNumber {1};
+   std::vector<ICMPPackagesDataListType> ICMPPackagesData {};
 };

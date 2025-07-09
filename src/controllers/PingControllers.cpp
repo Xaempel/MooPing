@@ -31,36 +31,53 @@ void PingControllers::startPingingMode()
    PingModel pingModel {};
 
    int selectedSengingfPingMode {0};
-   switch (static_cast<PingWorkingMode>(selectedOption)) {
-      case PingWorkingMode::Manual:
-         std::cout << "Warning if you wanna use this function you must run this app on sudo mode\n";
-         std::cout << "Enter IP of ping destination\n";
-         std::cin >> userInputIP;
 
-         std::cout << "Do you wanna send multiple ping packets?\n";
+   PingWorkingMode convertSelectedOption = static_cast<PingWorkingMode>(selectedOption);
+   if (convertSelectedOption == PingWorkingMode::Manual) {
+      std::cout << "Warning if you wanna use this function you must run this app on sudo mode\n";
+      std::cout << "Enter IP of ping destination\n";
+      std::cin >> userInputIP;
+
+      const auto additionalOptionInfoTextSelect = [] {
          std::cout << "(1) Yes\n";
          std::cout << "(2) No\n";
-         std::cin >> selectedSengingfPingMode;
-         switch (static_cast<SendingPingMode>(selectedSengingfPingMode)) {
-            case SendingPingMode::MultiSend:
-               while (true) {
-                  std::cout << "Ping sent\n";
-                  std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-                  pingModel.sendPing(userInputIP);
-               }
-               break;
+      };
 
-            case SendingPingMode::SingleSend:
+      std::cout << "Do you wanna send multiple ping packets?\n";
+      additionalOptionInfoTextSelect();
+      std::cin >> selectedSengingfPingMode;
+
+      const int enableAdditionalPackagesInfo {1};
+      int additionalPackagesInfoOption {};
+      std::cout << "Do you wanna see a packages info?\n";
+      additionalOptionInfoTextSelect();
+      std::cin >> additionalPackagesInfoOption;
+
+      if (additionalPackagesInfoOption == enableAdditionalPackagesInfo) {
+         isAdditionalInfoAboutPackages = true;
+      }
+
+      int currentPackagesSend {0};
+      switch (static_cast<SendingPingMode>(selectedSengingfPingMode)) {
+         case SendingPingMode::MultiSend:
+            while (true) {
+               std::this_thread::sleep_for(std::chrono::milliseconds(2000));
                pingModel.sendPing(userInputIP);
-               break;
-         }
+               if (isAdditionalInfoAboutPackages == true) {
+                  pingModel.showPackageInfo(currentPackagesSend);
+                  std::cout << "Ping sent\n";
+                  currentPackagesSend++;
+               }
+            }
+            break;
 
-         break;
-      case PingWorkingMode::Automatic:
-         std::cout << "I don't implemented this function yet\n";
-         std::this_thread::sleep_for(std::chrono::milliseconds(3000));
-         break;
-      default:
-         break;
+         case SendingPingMode::SingleSend:
+            pingModel.sendPing(userInputIP);
+            break;
+      }
+   }
+   else {
+      std::cout << "I don't implemented this function yet\n";
+      std::this_thread::sleep_for(std::chrono::milliseconds(3000));
    }
 }

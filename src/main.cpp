@@ -17,8 +17,8 @@
 **  with [MooPing].  If not, see <https://www.gnu.org/licenses/>.             **
 **                                                                            **
 *******************************************************************************/
-#include "../include/controllers/PingControllers.hpp"
 #include "../include/controllers/NetworkScanningControllers.hpp"
+#include "../include/controllers/PingControllers.hpp"
 #include "../include/tools/drawAppIcon.hpp"
 #include "include/controllers/NetworkScanningControllers.hpp"
 
@@ -34,29 +34,14 @@ enum class MenuOption {
 
 int main()
 {
-   std::cout << "Hello to MooPing\n";
-   std::cout << "For start click enter\n";
-   std::cin.get();
-
-   for (int i = 0; i <= 4; i++) {
-      std::cout << "\033[2J\033[H";
-      std::cout << "|";
-      std::cout << std::flush;
-      std::this_thread::sleep_for(std::chrono::milliseconds(350));
-
-      std::cout << "\033[2J\033[H";
-      std::cout << "—";
-      std::cout << std::flush;
-      std::this_thread::sleep_for(std::chrono::milliseconds(350));
-   }
-   std::cout << "\033[2J\033[H";
-
    PingControllers pingControllers;
    NetworkScanningControllers networkScanningControllers;
+   
    while (true) {
       std::cout << "\033[2J\033[H";
       drawAppIcon();
       int selectedOption {0};
+      std::cout << "Welcome to MooPing\n";
       std::cout << "MooPing menu\n";
       std::cout << "(1) Pinging Mode\n";
       std::cout << "(2) Network Scanning Mode\n";

@@ -2,13 +2,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/asio/ip/icmp.hpp>
-#include <cstdint>
-
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <arpa/inet.h>
-#endif
+#include <iostream>
 
 using boost::asio::ip::icmp;
 
@@ -43,13 +37,6 @@ uint16_t computeChecksum(const uint8_t* data, std::size_t length)
 
 void PingModel::sendPing(std::string destination_ip)
 {
-#ifdef _WIN32
-   WSADATA wsaData;
-   if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-      throw std::runtime_error("WSAStartup failed");
-   }
-#endif
-
    boost::asio::io_context context;
    icmp::resolver resolver(context);
    auto endpoint              = resolver.resolve(icmp::v4(), destination_ip, "");
@@ -60,7 +47,7 @@ void PingModel::sendPing(std::string destination_ip)
    packageHeader.type           = 8;
    packageHeader.code           = 0;
    packageHeader.identifier     = htons(1);
-   packageHeader.sequenceNumber = htons(1);
+   packageHeader.sequenceNumber = htons(packageSequenceNumber);
 
    const std::string packageBody = "Ping from MooPing";
    std::vector<uint8_t> data(sizeof(ICMPHeader) + packageBody.size());
@@ -73,9 +60,20 @@ void PingModel::sendPing(std::string destination_ip)
 
    std::memcpy(data.data(), &packageHeader, sizeof(ICMPHeader));
 
+   std::shared_ptr<ICMPPackageData> currentPackageData {std::make_shared<ICMPPackageData>()};
+
    socket.send_to(boost::asio::buffer(data), destination);
 
-#ifdef _WIN32
-   WSACleanup();
-#endif
+   currentPackageData->size           = sizeof(ICMPHeader) + packageBody.size();
+   currentPackageData->sequenceNumber = packageSequenceNumber;
+
+   ICMPPackagesData.push_back(currentPackageData);
+
+   packageSequenceNumber++;
+}
+
+void PingModel::showPackageInfo(int packageId)
+{
+   std::cout << "size of packages " << ICMPPackagesData.at(packageId)->size << "   ";
+   std::cout << "Sequence number is " << ICMPPackagesData.at(packageId)->sequenceNumber << "   ";
 }
