@@ -77,7 +77,25 @@ void PingControllers::startPingingMode()
       }
    }
    else {
-      std::cout << "I don't implemented this function yet\n";
-      std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+      std::string userIP;
+      std::cout << "Hello! Welcome to MooPing automatic ping mode.\n";
+      std::cout << "Please enter your IPv4 address and subnet mask in the following format: x.x.x.x/z\n";
+      std::cout << "Where x is an octet and z is the mask in CIDR notation.\n";
+      std::cin >> userIP;
+      std::vector<std::string> activeDeviseList = networkScanningModel.getNetworkScan(userIP);
+
+      int hostsCounter {1};
+      std::cout << "Your list of active host in network\n";
+      for (auto i : activeDeviseList) {
+         std::cout << "(" << hostsCounter << ") " << i << std::flush << "\n";
+         hostsCounter++;
+      }
+      int selectedHost {0};
+      std::cout << "Whose host I have to send a ping?\n";
+      std::cin >> selectedHost;
+
+      if (selectedHost > 0 && selectedHost - 1 < activeDeviseList.size()) {
+         pingModel.sendPing(activeDeviseList.at(selectedHost - 1));
+      }
    }
 }

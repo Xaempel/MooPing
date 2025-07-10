@@ -19,7 +19,11 @@
 *******************************************************************************/
 #pragma once
 
-class NetworkScanningModel{
-    public: 
-    void scanNetwork();
+#include <vector>
+#include <string>
+
+class NetworkScanningModel {
+   public:
+   void scanNetwork();
+   std::vector<std::string> getNetworkScan(std::string IP);
 };

@@ -19,10 +19,13 @@
 *******************************************************************************/
 #pragma once
 
+#include "../models/NetworkScanningModel.hpp"
+
 class PingControllers {
    public:
    void startPingingMode();
 
    private:
    bool isAdditionalInfoAboutPackages {false};
+   NetworkScanningModel networkScanningModel;
 };
