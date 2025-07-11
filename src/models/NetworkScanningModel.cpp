@@ -1,5 +1,8 @@
 #include "../include/models/NetworkScanningModel.hpp"
 
+#include "../include/tools/getLocalIPAddress.hpp"
+#include "../include/tools/getLocalNetmask.hpp"
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <iostream>
@@ -8,14 +11,16 @@
 
 void NetworkScanningModel::scanNetwork()
 {
-   std::string IP {};
-   std::cout << "Input your ip address for scan a network\n";
-   std::cout << "The input format must be like this x.x.x.x/z\n";
-   std::cout << "Where x is a octet and z is a short mask\n";
-   std::cin >> IP;
-   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+   std::string IP = tools::getLocalIPAddress();
+   std::string netmask {""};
 
-   std::string command {"nmap -sn " + IP + " -oX scan_result.xml > /dev/null 2>&1"};
+#ifdef _WIN32
+
+#else // code for Linux
+   netmask = tools::getLinuxLocalNetmask();
+#endif
+
+   std::string command {"nmap -sn " + IP + "/" + netmask + " -oX scan_result.xml > /dev/null 2>&1"};
    system(command.c_str());
 
    std::list<std::string> IPlist {};
@@ -42,6 +47,7 @@ void NetworkScanningModel::scanNetwork()
       std::cout << i << "\n";
    }
    std::cout << "To proceed press enter\n";
+   std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
    std::cin.get();
 }
 

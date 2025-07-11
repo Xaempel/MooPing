@@ -4,6 +4,8 @@ set(HPP_PATH
     include/controllers/PingControllers.hpp
     include/models/NetworkScanningModel.hpp
     include/models/PingModel.hpp
+    include/tools/getLocalNetmask.hpp
+    include/tools/getLocalIPAddress.hpp
 )
 
 set(CPP_PATH
@@ -13,4 +15,6 @@ set(CPP_PATH
     src/controllers/PingControllers.cpp
     src/models/NetworkScanningModel.cpp
     src/models/PingModel.cpp
+    src/tools/getLocalIPAddress.cpp
+    src/tools/getLocalNetmask.cpp
 )
