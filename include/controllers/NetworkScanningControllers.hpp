@@ -19,8 +19,6 @@
 *******************************************************************************/
 #pragma once
 
-#include "../include/models/NetworkScanningModel.hpp"
-
 class NetworkScanningControllers{
     public:
     void startScanningMode();

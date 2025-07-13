@@ -24,6 +24,5 @@
 
 class NetworkScanningModel {
    public:
-   void scanNetwork();
-   std::vector<std::string> getNetworkScan(std::string IP);
+   std::vector<std::string> getNetworkScan();
 };
