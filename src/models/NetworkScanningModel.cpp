@@ -12,9 +12,14 @@ std::vector<std::string> NetworkScanningModel::getNetworkScan()
    std::vector<std::string> networkScan;
 
    std::string ip {tools::getLocalIPAddress()};
+#ifdef _WIN32
+   std::string mask {tools::getWindowsLocalNetmask()};
+   std::string command = "nmap -sn " + ip + "/" + mask + " -oX scan_result.xml";
+#else
    std::string mask {tools::getLinuxLocalNetmask()};
-
    std::string command = "nmap -sn " + ip + "/" + mask + " -oX scan_result.xml > /dev/null 2>&1";
+#endif
+
    system(command.c_str());
 
    boost::property_tree::ptree tree {};

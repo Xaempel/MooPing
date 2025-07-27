@@ -23,4 +23,5 @@
 
 namespace tools{
     std::string getLinuxLocalNetmask();
+    std::string getWindowsLocalNetmask();
 };

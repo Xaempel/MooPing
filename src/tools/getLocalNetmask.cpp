@@ -1,8 +1,14 @@
 #include "../include/tools/getLocalNetmask.hpp"
 
+#include <stdexcept>
+
 // Windows Required Headers
 #ifdef _WIN32
-
+#include <windows.h>
+#include <iphlpapi.h>
+#include <vector>
+#include <stdexcept>
+#include <iostream>
 // Linux Required Headers
 #else
 #include <arpa/inet.h>
@@ -14,7 +20,7 @@ std::string tools::getLinuxLocalNetmask()
    std::string netmask {};
 
 #ifdef _WIN32
-#error "This function is only for a Linux. Dudee! "
+   throw std::runtime_error("This function is only for a Linux. Dudee!");
 #else
 
    struct ifaddrs* ifaddr;
@@ -48,4 +54,37 @@ std::string tools::getLinuxLocalNetmask()
 #endif
 
    return netmask;
+}
+
+std::string tools::getWindowsLocalNetmask()
+{
+#ifdef _WIN32
+   ULONG buflen = 0;
+   GetAdaptersInfo(nullptr, &buflen);
+
+   std::vector<BYTE> buffer(buflen);
+   PIP_ADAPTER_INFO adapterInfo = reinterpret_cast<PIP_ADAPTER_INFO>(buffer.data());
+
+   if (GetAdaptersInfo(adapterInfo, &buflen) != ERROR_SUCCESS) {
+      return {};
+   }
+
+   for (PIP_ADAPTER_INFO adapter = adapterInfo; adapter != nullptr; adapter = adapter->Next) {
+      IP_ADDR_STRING* ipList = &adapter->IpAddressList;
+
+      while (ipList) {
+         const char* ipAddr = ipList->IpAddress.String;
+         const char* mask   = ipList->IpMask.String;
+
+         if (ipAddr && strcmp(ipAddr, "0.0.0.0") != 0 && strcmp(ipAddr, "127.0.0.1") != 0) {
+            return std::string(mask);
+         }
+         ipList = ipList->Next;
+      }
+   }
+
+   return {};
+#else
+   throw std::runtime_error("This function is only for Windows. Mate!");
+#endif
 }
