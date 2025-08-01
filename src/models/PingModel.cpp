@@ -1,5 +1,7 @@
 #include "../include/models/PingModel.hpp"
 
+#include "../../include/tools/computeChecksum.hpp"
+
 #include <boost/asio.hpp>
 #include <boost/asio/ip/icmp.hpp>
 #include <chrono>
@@ -7,27 +9,6 @@
 using boost::asio::ip::icmp;
 
 using ICMPPackagesDataType = std::shared_ptr<ICMPPackageData>;
-
-uint16_t computeChecksum(const uint8_t* data, std::size_t length)
-{
-   uint32_t sum = 0;
-
-   for (std::size_t i = 0; i + 1 < length; i += 2) {
-      uint16_t word = (data[i] << 8) + data[i + 1];
-      sum += word;
-   }
-
-   if (length % 2 == 1) {
-      uint16_t word = data[length - 1] << 8;
-      sum += word;
-   }
-
-   while (sum >> 16) {
-      sum = (sum & 0xFFFF) + (sum >> 16);
-   }
-
-   return static_cast<uint16_t>(~sum);
-}
 
 void PingModel::sendPing(std::string destination_ip)
 {
@@ -81,7 +62,7 @@ std::vector<uint8_t> PingModel::constructICMPPackage(const std::string body)
    std::memcpy(data.data(), &packageHeader, sizeof(ICMPHeader));
    std::memcpy(data.data() + sizeof(ICMPHeader), body.data(), body.size());
 
-   uint16_t checksum      = computeChecksum(data.data(), data.size());
+   uint16_t checksum      = tools::computeChecksum(data.data(), data.size());
    packageHeader.checksum = htons(checksum);
 
    std::memcpy(data.data(), &packageHeader, sizeof(ICMPHeader));
