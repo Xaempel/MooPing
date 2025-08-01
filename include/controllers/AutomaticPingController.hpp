@@ -17,44 +17,16 @@
 **  with [MooPing].  If not, see <https://www.gnu.org/licenses/>.             **
 **                                                                            **
 *******************************************************************************/
-#include "../include/controllers/NetworkScanningControllers.hpp"
-#include "../include/controllers/PingControllers.hpp"
-#include "../include/tools/drawAppIcon.hpp"
-#include "include/controllers/NetworkScanningControllers.hpp"
+#pragma once
 
-#include <iostream>
+#include "../include/models/PingModel.hpp"
 
-enum class MenuOption {
-   PING     = 1,
-   SCANNING = 2,
-   EXIT     = 3,
-};
-
-int main(int argc, char* argv[])
+class AutomaticPingController
 {
-   PingControllers pingControllers;
-   NetworkScanningControllers networkScanningControllers;
+    public:
+    AutomaticPingController(PingModel& pingModel);
+    void startAutomaticPingMode();
 
-   while (true) {
-      std::cout << "\033[2J\033[H";
-      drawAppIcon();
-      int selectedOption {0};
-      std::cout << "Welcome to MooPing\n";
-      std::cout << "MooPing menu\n";
-      std::cout << "(1) Pinging Mode\n";
-      std::cout << "(2) Network Scanning Mode\n";
-      std::cout << "(3) Exit\n";
-      std::cin >> selectedOption;
-      switch (static_cast<MenuOption>(selectedOption)) {
-         case MenuOption::PING:
-            pingControllers.startPingingMode();
-            break;
-         case MenuOption::SCANNING:
-            networkScanningControllers.startScanningMode();
-            break;
-         case MenuOption::EXIT:
-            return 0;
-            break;
-      }
-   }
-}
+    private:
+    PingModel& _pingModel;
+};

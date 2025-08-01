@@ -1,7 +1,5 @@
 #include "../include/controllers/PingControllers.hpp"
 
-#include "../include/models/PingModel.hpp"
-
 #include <chrono>
 #include <iostream>
 #include <thread>
@@ -17,6 +15,8 @@ enum class SendingPingMode {
    SingleSend,
 };
 
+PingControllers::PingControllers() : automaticPingController(pingModel){}
+
 void PingControllers::startPingingMode()
 {
    int selectedOption {0};
@@ -28,7 +28,6 @@ void PingControllers::startPingingMode()
    std::cin >> selectedOption;
 
    std::string userInputIP {};
-   PingModel pingModel {};
 
    int selectedSengingfPingMode {0};
 
@@ -57,16 +56,21 @@ void PingControllers::startPingingMode()
          isAdditionalInfoAboutPackages = true;
       }
 
-      int currentPackagesSend {0};
+      int currentPackageId {0};
       switch (static_cast<SendingPingMode>(selectedSengingfPingMode)) {
          case SendingPingMode::MultiSend:
             while (true) {
                std::this_thread::sleep_for(std::chrono::milliseconds(2000));
                pingModel.sendPing(userInputIP);
                if (isAdditionalInfoAboutPackages == true) {
-                  pingModel.showPackageInfo(currentPackagesSend);
-                  std::cout << "Ping sent\n";
-                  currentPackagesSend++;
+                  auto ICMPPackagesData = pingModel.getPackagesData();
+                  std::cout << "packages_size=" << ICMPPackagesData.at(currentPackageId)->size << "   ";
+                  std::cout << "sequence_number=" << ICMPPackagesData.at(currentPackageId)->sequenceNumber << "   ";
+                  std::cout << "ttl=" << ICMPPackagesData.at(currentPackageId)->ttl << "   ";
+                  std::cout << "time=" << ICMPPackagesData.at(currentPackageId)->time << "ms    ";
+                  std::cout << "destination_ip=" << ICMPPackagesData.at(currentPackageId)->destinationAddress << "  ";
+                  std::cout << "\n";
+                  currentPackageId++;
                }
             }
             break;
@@ -77,20 +81,6 @@ void PingControllers::startPingingMode()
       }
    }
    else {
-      std::vector<std::string> activeDeviseList = networkScanningModel.getNetworkScan();
-
-      int hostsCounter {1};
-      std::cout << "Your list of active host in network\n";
-      for (auto i : activeDeviseList) {
-         std::cout << "(" << hostsCounter << ") " << i << std::flush << "\n";
-         hostsCounter++;
-      }
-      int selectedHost {0};
-      std::cout << "Whose host I have to send a ping?\n";
-      std::cin >> selectedHost;
-
-      if (selectedHost > 0 && selectedHost - 1 < activeDeviseList.size()) {
-         pingModel.sendPing(activeDeviseList.at(selectedHost - 1));
-      }
+      automaticPingController.startAutomaticPingMode();
    }
 }

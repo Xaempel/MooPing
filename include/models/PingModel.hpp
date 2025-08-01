@@ -33,14 +33,24 @@ struct ICMPPackageData {
    std::string destinationAddress {};
 };
 
+struct ICMPHeader {
+   std::uint8_t type            = 8;
+   std::uint8_t code            = 0;
+   std::uint16_t checksum       = 0;
+   std::uint16_t identifier     = 0;
+   std::uint16_t sequenceNumber = 0;
+};
+
 class PingModel {
-   using ICMPPackagesDataListType = std::shared_ptr<ICMPPackageData>;
+   using ICMPPackagesDataType = std::shared_ptr<ICMPPackageData>;
 
    public:
    void sendPing(std::string destination_ip);
-   void showPackageInfo(int idOfPackage);
+   [[nodiscard]] std::vector<ICMPPackagesDataType> getPackagesData();
 
    private:
+   std::vector<uint8_t> constructICMPPackage(const std::string body);
+
    int packageSequenceNumber {1};
-   std::vector<ICMPPackagesDataListType> ICMPPackagesData {};
+   std::vector<ICMPPackagesDataType> ICMPPackagesData {};
 };

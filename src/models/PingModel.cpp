@@ -3,17 +3,10 @@
 #include <boost/asio.hpp>
 #include <boost/asio/ip/icmp.hpp>
 #include <chrono>
-#include <iostream>
 
 using boost::asio::ip::icmp;
 
-struct ICMPHeader {
-   std::uint8_t type            = 8;
-   std::uint8_t code            = 0;
-   std::uint16_t checksum       = 0;
-   std::uint16_t identifier     = 0;
-   std::uint16_t sequenceNumber = 0;
-};
+using ICMPPackagesDataType = std::shared_ptr<ICMPPackageData>;
 
 uint16_t computeChecksum(const uint8_t* data, std::size_t length)
 {
@@ -44,28 +37,11 @@ void PingModel::sendPing(std::string destination_ip)
    icmp::endpoint destination = *endpoint.begin();
    icmp::socket socket(context, icmp::v4());
 
-   ICMPHeader packageHeader;
-   packageHeader.type           = 8;
-   packageHeader.code           = 0;
-   packageHeader.identifier     = htons(1);
-   packageHeader.sequenceNumber = htons(packageSequenceNumber);
-
-   const std::string packageBody = "Ping from MooPing";
-   std::vector<uint8_t> data(sizeof(ICMPHeader) + packageBody.size());
-
-   std::memcpy(data.data(), &packageHeader, sizeof(ICMPHeader));
-   std::memcpy(data.data() + sizeof(ICMPHeader), packageBody.data(), packageBody.size());
-
-   uint16_t checksum      = computeChecksum(data.data(), data.size());
-   packageHeader.checksum = htons(checksum);
-
-   std::memcpy(data.data(), &packageHeader, sizeof(ICMPHeader));
+   const std::string packageBody {"Ping from MooPing"};
+   auto startTime = std::chrono::steady_clock::now();
+   socket.send_to(boost::asio::buffer(constructICMPPackage(packageBody)), destination);
 
    std::shared_ptr<ICMPPackageData> currentPackageData {std::make_shared<ICMPPackageData>()};
-
-   auto startTime = std::chrono::steady_clock::now();
-   socket.send_to(boost::asio::buffer(data), destination);
-
    boost::asio::streambuf replyBuffer;
    icmp::endpoint senderEndpoint;
 
@@ -92,11 +68,28 @@ void PingModel::sendPing(std::string destination_ip)
    packageSequenceNumber++;
 }
 
-void PingModel::showPackageInfo(int packageId)
+std::vector<uint8_t> PingModel::constructICMPPackage(const std::string body)
 {
-   std::cout << "size of packages=" << ICMPPackagesData.at(packageId)->size << "   ";
-   std::cout << "sequence_number=" << ICMPPackagesData.at(packageId)->sequenceNumber << "   ";
-   std::cout << "ttl=" << ICMPPackagesData.at(packageId)->ttl << "   ";
-   std::cout << "time=" << ICMPPackagesData.at(packageId)->time << "ms    ";
-   std::cout << "destination_ip=" << ICMPPackagesData.at(packageId)->destinationAddress << "   ";
+   ICMPHeader packageHeader;
+   packageHeader.type           = 8;
+   packageHeader.code           = 0;
+   packageHeader.identifier     = htons(1);
+   packageHeader.sequenceNumber = htons(packageSequenceNumber);
+
+   std::vector<uint8_t> data(sizeof(ICMPHeader) + body.size());
+
+   std::memcpy(data.data(), &packageHeader, sizeof(ICMPHeader));
+   std::memcpy(data.data() + sizeof(ICMPHeader), body.data(), body.size());
+
+   uint16_t checksum      = computeChecksum(data.data(), data.size());
+   packageHeader.checksum = htons(checksum);
+
+   std::memcpy(data.data(), &packageHeader, sizeof(ICMPHeader));
+
+   return data;
+}
+
+[[nodiscard]] std::vector<ICMPPackagesDataType> PingModel::getPackagesData()
+{
+   return ICMPPackagesData;
 }
