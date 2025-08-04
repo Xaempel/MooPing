@@ -2,6 +2,9 @@
 
 #include "../../include/tools/computeChecksum.hpp"
 
+#include <boost/asio/ip/icmp.hpp>
+#include <stdexcept>
+
 using boost::asio::ip::icmp;
 
 using ICMPPackagesDataType = std::shared_ptr<ICMPPackageData>;
@@ -33,12 +36,34 @@ void PingModel::sendPing(std::string destination_ip)
 
    auto endTime             = std::chrono::steady_clock::now();
    auto duration            = std::chrono::duration<double, std::milli>(endTime - _startTime);
-   currentPackageData->time = duration.count(); 
+   currentPackageData->time = duration.count();
 
    std::vector<unsigned char> rawData(boost::asio::buffers_begin(replyBuffer.data()),
                                       boost::asio::buffers_end(replyBuffer.data()));
 
-   if (length >= 20) {
+   uint8_t ipHeaderLength = (rawData[0] & 0x0F) * 4;
+   const uint8_t icmpHeaderLength {8};
+
+   if (length >= ipHeaderLength + icmpHeaderLength) {
+      unsigned char icmpType = rawData[ipHeaderLength];
+      unsigned char icmpCode = rawData[ipHeaderLength + 1];
+
+      constexpr int destinationUnreachable {3};
+      if (icmpType == destinationUnreachable) {
+         constexpr int networkUnreachable {0};
+         constexpr int hostUnreachable {1};
+         
+         if (icmpCode == networkUnreachable) {
+            throw std::runtime_error("Network Unreachable");
+         }
+         else if (icmpCode == hostUnreachable) {
+            throw std::runtime_error("Host Unreachable");
+         }
+         else {
+            throw std::runtime_error("Destination Unreachable");
+         }
+      }
+
       unsigned char ttl       = rawData[8];
       currentPackageData->ttl = static_cast<int>(ttl);
    }
