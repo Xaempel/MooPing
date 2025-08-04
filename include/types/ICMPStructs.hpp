@@ -19,29 +19,21 @@
 *******************************************************************************/
 #pragma once
 
-#include <boost/asio.hpp>
-#include <boost/asio/ip/icmp.hpp>
-#include <memory>
-#include <vector>
+#include <cstdint>
+#include <string>
 
-#include "../types/ICMPStructs.hpp"
-
-class PingModel {
-   using ICMPPackagesDataType = std::shared_ptr<ICMPPackageData>;
-
-   public:
-   PingModel();
-   void sendPing(std::string destination_ip);
-   [[nodiscard]] ICMPPackagesDataType receivePing();
-
-   private:
-   std::vector<uint8_t> constructICMPPackage(const std::string body);
-
-   int packageSequenceNumber {1};
-   boost::asio::io_context _context;
-   boost::asio::ip::icmp::socket _socket;
-   const std::string _packageBody {"Ping from MooPing"};
+struct ICMPPackageData {
+   uint32_t size {0};
+   int sequenceNumber {0};
+   int ttl {0};
+   double time {0.0};
    std::string destinationAddress {};
+};
 
-   std::chrono::steady_clock::time_point _startTime;
+struct ICMPHeader {
+   std::uint8_t type {8};
+   std::uint8_t code {0};
+   std::uint16_t checksum {0};
+   std::uint16_t identifier {0};
+   std::uint16_t sequenceNumber {0};
 };

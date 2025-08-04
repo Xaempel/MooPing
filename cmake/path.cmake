@@ -8,6 +8,7 @@ set(HPP_PATH
     include/tools/getLocalIPAddress.hpp
     include/controllers/AutomaticPingController.hpp
     include/tools/computeChecksum.hpp
+    include/types/ICMPStructs.hpp
 )
 
 set(CPP_PATH
