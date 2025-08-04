@@ -15,7 +15,10 @@ enum class SendingPingMode {
    SingleSend,
 };
 
-PingControllers::PingControllers() : automaticPingController(pingModel){}
+PingControllers::PingControllers()
+    : automaticPingController(pingModel)
+{
+}
 
 void PingControllers::startPingingMode()
 {
@@ -62,13 +65,14 @@ void PingControllers::startPingingMode()
             while (true) {
                std::this_thread::sleep_for(std::chrono::milliseconds(2000));
                pingModel.sendPing(userInputIP);
+               auto packageData = pingModel.receivePing();
+
                if (isAdditionalInfoAboutPackages == true) {
-                  auto ICMPPackagesData = pingModel.getPackagesData();
-                  std::cout << "packages_size=" << ICMPPackagesData.at(currentPackageId)->size << "   ";
-                  std::cout << "sequence_number=" << ICMPPackagesData.at(currentPackageId)->sequenceNumber << "   ";
-                  std::cout << "ttl=" << ICMPPackagesData.at(currentPackageId)->ttl << "   ";
-                  std::cout << "time=" << ICMPPackagesData.at(currentPackageId)->time << "ms    ";
-                  std::cout << "destination_ip=" << ICMPPackagesData.at(currentPackageId)->destinationAddress << "  ";
+                  std::cout << "packages_size=" << packageData->size << "   ";
+                  std::cout << "sequence_number=" << packageData->sequenceNumber << "   ";
+                  std::cout << "ttl=" << packageData->ttl << "   ";
+                  std::cout << "time=" << packageData->time << "ms    ";
+                  std::cout << "destination_ip=" << packageData->destinationAddress << "  ";
                   std::cout << "\n";
                   currentPackageId++;
                }

@@ -2,35 +2,38 @@
 
 #include "../../include/tools/computeChecksum.hpp"
 
-#include <boost/asio.hpp>
-#include <boost/asio/ip/icmp.hpp>
-#include <chrono>
-
 using boost::asio::ip::icmp;
 
 using ICMPPackagesDataType = std::shared_ptr<ICMPPackageData>;
 
+PingModel::PingModel()
+    : _socket(_context, icmp::v4())
+{
+}
+
 void PingModel::sendPing(std::string destination_ip)
 {
-   boost::asio::io_context context;
-   icmp::resolver resolver(context);
+   icmp::resolver resolver(_context);
    auto endpoint              = resolver.resolve(icmp::v4(), destination_ip, "");
    icmp::endpoint destination = *endpoint.begin();
-   icmp::socket socket(context, icmp::v4());
+   destinationAddress         = destination.address().to_string();
 
-   const std::string packageBody {"Ping from MooPing"};
-   auto startTime = std::chrono::steady_clock::now();
-   socket.send_to(boost::asio::buffer(constructICMPPackage(packageBody)), destination);
+   _startTime = std::chrono::steady_clock::now();
+   _socket.send_to(boost::asio::buffer(constructICMPPackage(_packageBody)), destination);
+}
 
+[[nodiscard]] ICMPPackagesDataType PingModel::receivePing()
+{
    std::shared_ptr<ICMPPackageData> currentPackageData {std::make_shared<ICMPPackageData>()};
    boost::asio::streambuf replyBuffer;
    icmp::endpoint senderEndpoint;
 
-   std::size_t length       = socket.receive_from(replyBuffer.prepare(1024), senderEndpoint);
-   auto endTime             = std::chrono::steady_clock::now();
-   auto duration            = std::chrono::duration<double, std::milli>(endTime - startTime);
-   currentPackageData->time = duration.count();
+   std::size_t length = _socket.receive_from(replyBuffer.prepare(1024), senderEndpoint);
    replyBuffer.commit(length);
+
+   auto endTime             = std::chrono::steady_clock::now();
+   auto duration            = std::chrono::duration<double, std::milli>(endTime - _startTime);
+   currentPackageData->time = duration.count(); 
 
    std::vector<unsigned char> rawData(boost::asio::buffers_begin(replyBuffer.data()),
                                       boost::asio::buffers_end(replyBuffer.data()));
@@ -40,13 +43,12 @@ void PingModel::sendPing(std::string destination_ip)
       currentPackageData->ttl = static_cast<int>(ttl);
    }
 
-   currentPackageData->size               = sizeof(ICMPHeader) + packageBody.size();
+   currentPackageData->size               = sizeof(ICMPHeader) + _packageBody.size();
    currentPackageData->sequenceNumber     = packageSequenceNumber;
-   currentPackageData->destinationAddress = destination.address().to_string().c_str();
-
-   ICMPPackagesData.push_back(currentPackageData);
+   currentPackageData->destinationAddress = destinationAddress;
 
    packageSequenceNumber++;
+   return currentPackageData;
 }
 
 std::vector<uint8_t> PingModel::constructICMPPackage(const std::string body)
@@ -68,9 +70,4 @@ std::vector<uint8_t> PingModel::constructICMPPackage(const std::string body)
    std::memcpy(data.data(), &packageHeader, sizeof(ICMPHeader));
 
    return data;
-}
-
-[[nodiscard]] std::vector<ICMPPackagesDataType> PingModel::getPackagesData()
-{
-   return ICMPPackagesData;
 }
