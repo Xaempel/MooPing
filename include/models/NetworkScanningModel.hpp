@@ -22,7 +22,11 @@
 #include <vector>
 #include <string>
 
+/// @brief This model is responsible for scanning the network
+/// @ingroup Models
 class NetworkScanningModel {
    public:
+   /// @brief Method who scan network by nmap and process nmap's return result 
+   /// @return Returns a list of active hosts on the network
    std::vector<std::string> getNetworkScan();
 };

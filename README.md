@@ -1,6 +1,8 @@
 # MooPing
 MooPing- My own ping: This app idea is create a better ping with more fancy things like automatik scanning network and listing a actives devices in network ready for pinging
-![App Icon](assets/MooPingIcon.png)
+<div align="center">
+  <img src="assets/MooPingIcon.png" alt="App Icon" />
+</div>
 
 ## Licenese
 
@@ -14,6 +16,9 @@ The full text of the Boost Software License is included in the [`docs/licenses/B
 
 You can find more about the Boost license here:  
 [https://www.boost.org/users/license.html](https://www.boost.org/users/license.html)
+
+## Documentation for project
+If you need a docs for this project you can find it in [Readme file in docs folder](docs/Readme.md)
 
 ## System Requirements
 

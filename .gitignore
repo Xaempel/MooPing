@@ -1,3 +1,6 @@
+# This is a name of dir for auto generate documentation if you want generated documents you must run doxygen  
+docs_class
+
 # Build files
 build
 

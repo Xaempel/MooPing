@@ -19,7 +19,10 @@
 *******************************************************************************/
 #pragma once
 
+/// @brief Class responsible for network scan function in app
+/// @ingroup Controllers
 class NetworkScanningControllers{
     public:
+    /// @brief This function start network scan function 
     void startScanningMode();
 };

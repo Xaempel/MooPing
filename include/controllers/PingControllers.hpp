@@ -21,9 +21,12 @@
 
 #include "AutomaticPingController.hpp"
 
+/// @brief Class responsible for ping functions in app
+/// @ingroup Controllers
 class PingControllers {
    public:
    PingControllers();
+   /// @brief Starts ping functions in app. This function is a entry point for ping functions in app, in future I'll add Single Ping Controller for single ping mode for now logic for this function is in it.
    void startPingingMode();
 
    private:

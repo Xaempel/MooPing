@@ -26,12 +26,17 @@
 
 #include "../types/ICMPStructs.hpp"
 
+/// @brief This model is responsible for ping host and receive ping response
+/// @ingroup Models
 class PingModel {
    using ICMPPackagesDataType = std::shared_ptr<ICMPPackageData>;
 
    public:
    PingModel();
+   /// @brief This method send ping to destination IP
    void sendPing(std::string destination_ip);
+   /// @brief This method receives the ping response and collects the ping packet data
+   /// @return Returns a struct with ping package data
    [[nodiscard]] ICMPPackagesDataType receivePing();
 
    private:

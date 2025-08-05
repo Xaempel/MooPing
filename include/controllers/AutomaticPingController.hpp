@@ -21,10 +21,13 @@
 
 #include "../include/models/PingModel.hpp"
 
+/// @brief Class responsible for Automatic ping scan function in app
+/// @ingroup Controllers
 class AutomaticPingController
 {
     public:
     AutomaticPingController(PingModel& pingModel);
+    /// @brief This function start automatic ping scan function in app
     void startAutomaticPingMode();
 
     private:

@@ -1,0 +1,8 @@
+/** 
+ * @defgroup Models
+ * @brief This group contains classes responsible for handling and managing application data.
+*/
+
+/// @defgroup Controllers
+/// @brief This group contains classes responsible for logic in application like get user's input and presenting data in app
+
