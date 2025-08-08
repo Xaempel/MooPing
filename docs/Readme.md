@@ -16,7 +16,11 @@ and more.
 Probably I'll add bash script for config and run MooPing but this is a future.
 
 ### Linux
-I going to make one script to various distro for install and run MooPing, but this will be add in future and then I write how you can run it.
+If you wanna automation install and config app run as sudo this command 
+
+`sudo python scripts/project_config_linux.py`
+
+This script in automationing way detect you os and will use your package manager to install required dependencies
 ### Mac
 I'll not support mac never!
 
