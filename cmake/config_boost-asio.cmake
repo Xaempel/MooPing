@@ -1,5 +1,3 @@
-cmake_policy(SET CMP0167 OLD)
-
 function(config_boost_asio PROJECT_NAME)
     find_package(Boost REQUIRED COMPONENTS system thread)
 

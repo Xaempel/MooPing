@@ -6,7 +6,7 @@ In this docs you can find a helpful information like this
     - [Linux](#linux)
     - [Mac](#mac)
 - [How I can get source docs](#generating-documentation-by-source-code-commnets)
-- [Where I can see how this project works](#videos-how-mooping-works)
+- [Where I can see how this project works](#gifs-how-mooping-works)
 
 and more.
 
@@ -32,8 +32,12 @@ If you wanna get a documentation you have to run doxygen in main folder.
 
 and then you will have docs site in docs_class/index.html file
 
-## Videos how MooPing works
-I'll make this videos in future
+## Gifs how MooPing works
+### Manual Pinging mode in MooPing
+
+<p align="center">
+  <img src="../assets/MooPingUsingPresentation.gif" alt="opis" width="700"/>
+</p>
 
 ## My next steps in the project
 For see these you can see a [RoadMap file](Roadmap.md)

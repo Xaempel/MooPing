@@ -1,5 +1,7 @@
 # MooPing
-MooPing- My own ping: This app idea is create a better ping with more fancy things like automatik scanning network and listing a actives devices in network ready for pinging
+MooPing- My own ping: This app idea is create a better ping with more fancy things like automatik scanning network and listing a actives devices in network ready for pinging.
+For look how this project work you can open the [docs readme file](docs/Readme.md#gifs-how-mooping-works) 
+
 <div align="center">
   <img src="assets/MooPingIcon.png" alt="App Icon" />
 </div>
